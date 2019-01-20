@@ -1,20 +1,46 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-var erase = require('./routes/erase');
-var trades = require('./routes/trades');
-var stocks = require('./routes/stocks');
+const index = require('./routes/index');
+const erase = require('./routes/erase');
+const trades = require('./routes/trades');
+const stocks = require('./routes/stocks');
+const sqlite = require('sqlite3');
 
-var app = express();
+
+function initDB(app){
+    const DB = app.get('db');
+    
+    DB.run(`CREATE TABLE IF NOT EXISTS trades (
+        id int primary key, 
+        type text, 
+        user_id int, 
+        user_name text, 
+        symbol text, 
+        shares int, 
+        price real, 
+        timestamp datetime
+    );`);
+    
+    DB.run(`CREATE INDEX symbol_index ON trades (symbol)`);
+    DB.run(`CREATE INDEX time_index ON trades (timestamp)`);
+    DB.run(`CREATE INDEX user_index ON trades (user_id)`);
+    DB.run(`CREATE INDEX type_index ON trades (type)`);
+}
+
+
+const app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.set('db', new sqlite.Database(':memory:'));
+initDB(app);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -32,7 +58,7 @@ app.use('/stocks', stocks);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
