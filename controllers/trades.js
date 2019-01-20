@@ -31,10 +31,14 @@ module.exports = {
                 req.body.timestamp,
             );
 
-            stmt.run((err) => {
-                if(err) return void reject(err);
+            DB.all(`SELECT id FROM trades WHERE id=? LIMIT 1`, stockSymbol, (err, result) => {
+                if(result.length > 0) return void reject();
 
-                resolve();
+                stmt.run((err) => {
+                    if(err) return void reject(err);
+
+                    resolve();
+                });
             });
         });
     },
