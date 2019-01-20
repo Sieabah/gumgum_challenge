@@ -24,14 +24,14 @@ function initDB(app){
         shares int,
         price real,
         timestamp datetime
-    );`);
-
-    DB.run(`CREATE INDEX IF NOT EXISTS unique_trade ON trades (id)`);
-    DB.run(`CREATE INDEX IF NOT EXISTS symbol_index ON trades (symbol)`);
-    DB.run(`CREATE INDEX IF NOT EXISTS price_index ON trades (price)`);
-    DB.run(`CREATE INDEX IF NOT EXISTS time_index ON trades (timestamp)`);
-    DB.run(`CREATE INDEX IF NOT EXISTS user_index ON trades (user_id)`);
-    DB.run(`CREATE INDEX IF NOT EXISTS type_index ON trades (type)`);
+    );`, () => {
+      DB.run(`CREATE INDEX IF NOT EXISTS unique_trade ON trades (id)`);
+      DB.run(`CREATE INDEX IF NOT EXISTS symbol_index ON trades (symbol)`);
+      DB.run(`CREATE INDEX IF NOT EXISTS price_index ON trades (price)`);
+      DB.run(`CREATE INDEX IF NOT EXISTS time_index ON trades (timestamp)`);
+      DB.run(`CREATE INDEX IF NOT EXISTS user_index ON trades (user_id)`);
+      DB.run(`CREATE INDEX IF NOT EXISTS type_index ON trades (type)`);
+    });
 }
 
 
