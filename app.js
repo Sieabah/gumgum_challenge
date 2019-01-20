@@ -14,22 +14,24 @@ const sqlite = require('sqlite3');
 
 function initDB(app){
     const DB = app.get('db');
-    
+
     DB.run(`CREATE TABLE IF NOT EXISTS trades (
-        id int primary key, 
-        type text, 
-        user_id int, 
-        user_name text, 
-        symbol text, 
-        shares int, 
-        price real, 
+        id int primary key,
+        type text,
+        user_id int,
+        user_name text,
+        symbol text,
+        shares int,
+        price real,
         timestamp datetime
     );`);
-    
-    DB.run(`CREATE INDEX symbol_index ON trades (symbol)`);
-    DB.run(`CREATE INDEX time_index ON trades (timestamp)`);
-    DB.run(`CREATE INDEX user_index ON trades (user_id)`);
-    DB.run(`CREATE INDEX type_index ON trades (type)`);
+
+    DB.run(`CREATE INDEX IF NOT EXISTS unique_trade ON trades (id)`);
+    DB.run(`CREATE INDEX IF NOT EXISTS symbol_index ON trades (symbol)`);
+    DB.run(`CREATE INDEX IF NOT EXISTS price_index ON trades (price)`);
+    DB.run(`CREATE INDEX IF NOT EXISTS time_index ON trades (timestamp)`);
+    DB.run(`CREATE INDEX IF NOT EXISTS user_index ON trades (user_id)`);
+    DB.run(`CREATE INDEX IF NOT EXISTS type_index ON trades (type)`);
 }
 
 
