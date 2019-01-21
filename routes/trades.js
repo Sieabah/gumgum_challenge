@@ -6,7 +6,7 @@ const trades = require('../controllers/trades');
 router.post('/', (req, res) => {
     trades.create(req)
         .then(() => res.sendStatus(201))
-        .catch(() => res.sendStatus(400));
+        .catch((err) => res.sendStatus(400));
 });
 
 router.get('/', (req, res) => {
@@ -18,7 +18,12 @@ router.get('/', (req, res) => {
 router.get('/users/:userID', (req, res) => {
     trades.userTrade(req, req.params.userID)
         .then((results) => res.json(results))
-        .catch(() => res.sendStatus(400));
+        .catch((err) => {
+            if(err === 404)
+                return void res.sendStatus(404);
+
+            res.sendStatus(400);
+        });
 })
 
 module.exports = router;

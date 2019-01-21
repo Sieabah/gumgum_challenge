@@ -5,7 +5,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             const DB = getDB(req);
             //Limitation on large scale index, does not explicitly state pagination is what is desired
-            DB.all(`SELECT * FROM trades`, (err, results) => {
+            DB.all(`SELECT * FROM trades ORDER BY id`, (err, results) => {
                 if(err) return void reject(err);
 
                 resolve(results.map(formatResult));
@@ -31,7 +31,7 @@ module.exports = {
                 req.body.timestamp,
             );
 
-            DB.all(`SELECT id FROM trades WHERE id=? LIMIT 1`, stockSymbol, (err, result) => {
+            DB.all(`SELECT id FROM trades WHERE id=? LIMIT 1`, (err, result) => {
                 if(result.length > 0) return void reject();
 
                 stmt.run((err) => {
@@ -48,6 +48,7 @@ module.exports = {
             const stmt = DB.prepare(`SELECT * FROM trades WHERE user_id=? ORDER BY id`);
             stmt.all(userID, (err, results) => {
                 if(err) return void reject(err);
+                if(results.length === 0) return void reject(404);
 
                 resolve(results.map(formatResult));
             })
